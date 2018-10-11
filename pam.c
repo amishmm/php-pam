@@ -1,23 +1,24 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP version 4.0                                                      |
+  | PHP Version 7                                                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997, 1998, 1999, 2000 The PHP Group                   |
+  | Copyright (c) 1997-2018 The PHP Group                                |
   +----------------------------------------------------------------------+
-  | This source file is subject to version 2.02 of the PHP license,      |
+  | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
-  | available at through the world-wide-web at                           |
-  | http://www.php.net/license/2_02.txt.                                 |
+  | available through the world-wide-web at the following url:           |
+  | http://www.php.net/license/3_01.txt                                  |
   | If you did not receive a copy of the PHP license and are unable to   |
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Authors: Mikael Johansson <mikael AT synd DOT info>                  |
+  | Authors: Amish                                                       |
+  | PHP 4.0: Mikael Johansson <mikael AT synd DOT info>                  |
   |          Chad Cunningham                                             |
   +----------------------------------------------------------------------+
 */
 
-/* $Id: pam.c 291416 2009-11-29 10:47:35Z mikl $ */
+/* $Id$ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -31,84 +32,14 @@
 
 ZEND_DECLARE_MODULE_GLOBALS(pam)
 
-/* {{{ pam_functions[]
- */
-zend_function_entry pam_functions[] = {
-	PHP_FE(pam_auth,	NULL)
-	PHP_FE(pam_chpass,	NULL)
-	{NULL, NULL, NULL}
-};
-/* }}} */
-
-/* {{{ pam_module_entry
- */
-zend_module_entry pam_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
-	STANDARD_MODULE_HEADER,
-#endif
-	"pam",
-	pam_functions,
-	PHP_MINIT(pam),
-	PHP_MSHUTDOWN(pam),
-	NULL,					/* Replace with NULL if there's nothing to do at request start */
-	NULL,					/* Replace with NULL if there's nothing to do at request end */
-	PHP_MINFO(pam),
-#if ZEND_MODULE_API_NO >= 20010901
-	PHP_PAM_VERSION,
-#endif
-	STANDARD_MODULE_PROPERTIES
-};
-/* }}} */
-
-#ifdef COMPILE_DL_PAM
-ZEND_GET_MODULE(pam)
-#endif
+/* True global resources - no need for thread safety here */
+static int le_pam;
 
 /* {{{ PHP_INI
  */
 PHP_INI_BEGIN()
 	STD_PHP_INI_ENTRY("pam.servicename", "php", PHP_INI_ALL, OnUpdateString, servicename, zend_pam_globals, pam_globals)
 PHP_INI_END()
-/* }}} */
-
-/* {{{ php_pam_init_globals
- */
-static void php_pam_init_globals(zend_pam_globals *pam_globals)
-{
-	pam_globals->servicename = NULL;
-}
-/* }}} */
-
-/* {{{ PHP_MINIT_FUNCTION
- */
-PHP_MINIT_FUNCTION(pam)
-{
-	ZEND_INIT_MODULE_GLOBALS(pam, php_pam_init_globals, NULL);
-	REGISTER_INI_ENTRIES();
-	return SUCCESS;
-}
-/* }}} */
-
-/* {{{ PHP_MSHUTDOWN_FUNCTION
- */
-PHP_MSHUTDOWN_FUNCTION(pam)
-{
-	UNREGISTER_INI_ENTRIES();
-	return SUCCESS;
-}
-/* }}} */
-
-/* {{{ PHP_MINFO_FUNCTION
- */
-PHP_MINFO_FUNCTION(pam)
-{
-	php_info_print_table_start();
-	php_info_print_table_header(2, "PAM support", "enabled");
-	php_info_print_table_row(2, "Extension version", PHP_PAM_VERSION);
-	php_info_print_table_end();
-
-	DISPLAY_INI_ENTRIES();
-}
 /* }}} */
 
 /*
@@ -222,13 +153,13 @@ int chpass_pam_talker(int num_msg,
 	return PAM_SUCCESS;
 }
 
-/* {{{ proto bool pam_auth( string host, string password [, string &status [ bool checkacctmgmt = true ] ])
+/* {{{ proto bool pam_auth( string host, string password [, string &status [, bool checkacctmgmt = true ] ])
    Authenticates a user and returns TRUE on success, FALSE on failure */
 PHP_FUNCTION(pam_auth)
 {
 	char *username, *password;
-	int username_len, password_len;
-	zval *status = NULL, **server, **remote_addr;
+	size_t username_len, password_len;
+	zval *status = NULL, *server, *remote_addr;
 	zend_bool checkacctmgmt = 1;
 
 	pam_auth_t userinfo = {NULL, NULL};
@@ -248,14 +179,15 @@ PHP_FUNCTION(pam_auth)
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_start");
 			zval_dtor(status);
-			ZVAL_STRING(status, error_msg, 0);
+			ZVAL_STRING(status, error_msg);
+			efree(error_msg);
 		}
 		RETURN_FALSE;
 	}
 
-	if (zend_hash_find(&EG(symbol_table), "_SERVER", sizeof("_SERVER"), (void **)&server) == SUCCESS && Z_TYPE_PP(server) == IS_ARRAY) {
-		if (zend_hash_find(Z_ARRVAL_PP(server), "REMOTE_ADDR", sizeof("REMOTE_ADDR"), (void **)&remote_addr) == SUCCESS && Z_TYPE_PP(remote_addr) == IS_STRING) {
-			pam_set_item(pamh, PAM_RHOST, Z_STRVAL_PP(remote_addr));
+	if ((server = zend_hash_str_find(&EG(symbol_table), "_SERVER", sizeof("_SERVER")-1)) != NULL && Z_TYPE_P(server) == IS_ARRAY) {
+		if ((remote_addr = zend_hash_str_find(Z_ARRVAL_P(server), "REMOTE_ADDR", sizeof("REMOTE_ADDR")-1)) != NULL && Z_TYPE_P(remote_addr) == IS_STRING) {
+			pam_set_item(pamh, PAM_RHOST, Z_STRVAL_P(remote_addr));
 		}
 	}
 
@@ -263,7 +195,8 @@ PHP_FUNCTION(pam_auth)
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_authenticate");
 			zval_dtor(status);
-			ZVAL_STRING(status, error_msg, 0);
+			ZVAL_STRING(status, error_msg);
+			efree(error_msg);
 		}
 		pam_end(pamh, PAM_SUCCESS);
 		RETURN_FALSE;
@@ -274,7 +207,8 @@ PHP_FUNCTION(pam_auth)
 			if (status) {
 				spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_acct_mgmt");
 				zval_dtor(status);
-				ZVAL_STRING(status, error_msg, 0);
+				ZVAL_STRING(status, error_msg);
+				efree(error_msg);
 			}
 			pam_end(pamh, PAM_SUCCESS);
 			RETURN_FALSE;
@@ -291,7 +225,7 @@ PHP_FUNCTION(pam_auth)
 PHP_FUNCTION(pam_chpass)
 {
 	char *username, *oldpass, *newpass;
-	int username_len, oldpass_len, newpass_len;
+	size_t username_len, oldpass_len, newpass_len;
 	zval *status = NULL;
 
 	pam_chpass_t userinfo = {NULL, NULL, NULL, 0};
@@ -312,7 +246,8 @@ PHP_FUNCTION(pam_chpass)
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_start");
 			zval_dtor(status);
-			ZVAL_STRING(status, error_msg, 0);
+			ZVAL_STRING(status, error_msg);
+			efree(error_msg);
 		}
 		RETURN_FALSE;
 	}
@@ -321,7 +256,8 @@ PHP_FUNCTION(pam_chpass)
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_authenticate");
 			zval_dtor(status);
-			ZVAL_STRING(status, error_msg, 0);
+			ZVAL_STRING(status, error_msg);
+			efree(error_msg);
 		}
 		pam_end(pamh, PAM_SUCCESS);
 		RETURN_FALSE;
@@ -331,7 +267,8 @@ PHP_FUNCTION(pam_chpass)
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_chauthtok");
 			zval_dtor(status);
-			ZVAL_STRING(status, error_msg, 0);
+			ZVAL_STRING(status, error_msg);
+			efree(error_msg);
 		}
 		pam_end(pamh, PAM_SUCCESS);
 		RETURN_FALSE;
@@ -341,6 +278,79 @@ PHP_FUNCTION(pam_chpass)
 	RETURN_TRUE;
 }
 /* }}} */
+
+/* {{{ php_pam_init_globals
+ */
+static void php_pam_init_globals(zend_pam_globals *pam_globals)
+{
+	pam_globals->servicename = NULL;
+}
+/* }}} */
+
+/* {{{ PHP_MINIT_FUNCTION
+ */
+PHP_MINIT_FUNCTION(pam)
+{
+	REGISTER_INI_ENTRIES();
+	return SUCCESS;
+}
+/* }}} */
+
+/* {{{ PHP_MSHUTDOWN_FUNCTION
+ */
+PHP_MSHUTDOWN_FUNCTION(pam)
+{
+	UNREGISTER_INI_ENTRIES();
+	return SUCCESS;
+}
+/* }}} */
+
+/* {{{ PHP_MINFO_FUNCTION
+ */
+PHP_MINFO_FUNCTION(pam)
+{
+	php_info_print_table_start();
+	php_info_print_table_header(2, "PAM support", "enabled");
+	php_info_print_table_row(2, "Extension version", PHP_PAM_VERSION);
+	php_info_print_table_end();
+
+	DISPLAY_INI_ENTRIES();
+}
+/* }}} */
+
+/* {{{ pam_functions[]
+ *
+ * Every user visible function must have an entry in pam_functions[].
+ */
+const zend_function_entry pam_functions[] = {
+	PHP_FE(pam_auth,	NULL)
+	PHP_FE(pam_chpass,	NULL)
+	PHP_FE_END	/* Must be the last line in pam_functions[] */
+};
+/* }}} */
+
+/* {{{ pam_module_entry
+ */
+zend_module_entry pam_module_entry = {
+	STANDARD_MODULE_HEADER,
+	"pam",
+	pam_functions,
+	PHP_MINIT(pam),
+	PHP_MSHUTDOWN(pam),
+	NULL,	/* Replace with NULL if there's nothing to do at request start */
+	NULL,	/* Replace with NULL if there's nothing to do at request end */
+	PHP_MINFO(pam),
+	PHP_PAM_VERSION,
+	STANDARD_MODULE_PROPERTIES
+};
+/* }}} */
+
+#ifdef COMPILE_DL_PAM
+#ifdef ZTS
+ZEND_TSRMLS_CACHE_DEFINE()
+#endif
+ZEND_GET_MODULE(pam)
+#endif
 
 /*
  * Local variables:

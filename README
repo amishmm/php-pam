@@ -1,13 +1,13 @@
 API
 
-  bool pam_auth(string $username, string $password [, string &$error [ $checkacctmgmt = true ] ])
+  bool pam_auth(string $username, string $password [, string &$error [, $checkacctmgmt = true ] ])
   bool pam_chpass(string $username, string $oldpassword, string $newpassword [, string &$error ])
 
  The parameters are
  
-   username			- Username to check
-   password			- User supplied password
-   error			- Output parameter to put any error messages in
+   username		- Username to check
+   password		- User supplied password
+   error		- Output parameter to put any error messages in
    checkacctmgmt	- Call pam_acct_mgmt() to check account expiration and access hours (requires root access!)
    oldpassword		- Current password on account
    newpassword		- Password to change to

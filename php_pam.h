@@ -1,23 +1,24 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP version 4.0                                                      |
+  | PHP Version 7                                                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997, 1998, 1999, 2000 The PHP Group                   |
+  | Copyright (c) 1997-2018 The PHP Group                                |
   +----------------------------------------------------------------------+
-  | This source file is subject to version 2.02 of the PHP license,      |
+  | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
-  | available at through the world-wide-web at                           |
-  | http://www.php.net/license/2_02.txt.                                 |
+  | available through the world-wide-web at the following url:           |
+  | http://www.php.net/license/3_01.txt                                  |
   | If you did not receive a copy of the PHP license and are unable to   |
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Authors: Mikael Johansson <mikael AT synd DOT info>                  |
+  | Authors: Amish                                                       |
+  | PHP 4.0: Mikael Johansson <mikael AT synd DOT info>                  |
   |          Chad Cunningham                                             |
   +----------------------------------------------------------------------+
 */
 
-/* $Id: php_pam.h 291417 2009-11-29 10:49:27Z mikl $ */
+/* $Id$ */
 
 #ifndef PHP_PAM_H
 #define PHP_PAM_H
@@ -25,24 +26,19 @@
 extern zend_module_entry pam_module_entry;
 #define phpext_pam_ptr &pam_module_entry
 
-#define PHP_PAM_VERSION "1.0.3"
+#define PHP_PAM_VERSION "2.0.0"
 
 #ifdef PHP_WIN32
-#define PHP_PAM_API __declspec(dllexport)
+#	define PHP_PAM_API __declspec(dllexport)
+#elif defined(__GNUC__) && __GNUC__ >= 4
+#	define PHP_PAM_API __attribute__ ((visibility("default")))
 #else
-#define PHP_PAM_API
+#	define PHP_PAM_API
 #endif
 
 #ifdef ZTS
 #include "TSRM.h"
 #endif
-
-PHP_MINIT_FUNCTION(pam);
-PHP_MSHUTDOWN_FUNCTION(pam);
-PHP_MINFO_FUNCTION(pam);
-
-PHP_FUNCTION(pam_auth);
-PHP_FUNCTION(pam_chpass);
 
 ZEND_BEGIN_MODULE_GLOBALS(pam)
 	char *servicename;
@@ -57,13 +53,14 @@ typedef struct {
 	int count;
 } pam_chpass_t;
 
-#ifdef ZTS
-#define PAM_G(v) TSRMG(pam_globals_id, zend_pam_globals *, v)
-#else
-#define PAM_G(v) (pam_globals.v)
+#define PAM_G(v) ZEND_MODULE_GLOBALS_ACCESSOR(pam, v)
+
+#if defined(ZTS) && defined(COMPILE_DL_PAM)
+ZEND_TSRMLS_CACHE_EXTERN()
 #endif
 
 #endif	/* PHP_PAM_H */
+
 
 /*
  * Local variables:
