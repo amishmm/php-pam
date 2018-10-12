@@ -29,6 +29,7 @@
 #include "ext/standard/info.h"
 #include "php_pam.h"
 #include <security/pam_appl.h>
+#include <security/_pam_macros.h>
 
 ZEND_DECLARE_MODULE_GLOBALS(pam)
 
@@ -58,7 +59,7 @@ int auth_pam_talker(int num_msg,
 {
 	unsigned short i = 0;
 	pam_auth_t *userinfo = (pam_auth_t *) appdata_ptr;
-	struct pam_response *response = 0;
+	struct pam_response *response = NULL;
 
 	/* parameter sanity checking */
 	if (!resp || !msg || !userinfo)
@@ -70,10 +71,10 @@ int auth_pam_talker(int num_msg,
 		return PAM_CONV_ERR;
 
 	/* copy values */
-	for (i = 0; i < num_msg; i++) {
+	for (i = 0; i < num_msg; ++i) {
 		/* initialize to safe values */
 		response[i].resp_retcode = 0;
-		response[i].resp = 0;
+		response[i].resp = NULL;
 
 		/* select response based on requested output style */
 		switch (msg[i]->msg_style) {
@@ -85,8 +86,7 @@ int auth_pam_talker(int num_msg,
 				response[i].resp = strdup(userinfo->pw);
 				break;
 			default:
-				if (response)
-				free(response);
+				_pam_drop_reply(response, i);
 				return PAM_CONV_ERR;
 		}
 	}
@@ -111,7 +111,7 @@ int chpass_pam_talker(int num_msg,
 {
 	unsigned short i = 0;
 	pam_chpass_t *userinfo = (pam_chpass_t *) appdata_ptr;
-	struct pam_response *response = 0;
+	struct pam_response *response = NULL;
 
 	/* parameter sanity checking */
 	if (!resp || !msg || !userinfo)
@@ -123,10 +123,10 @@ int chpass_pam_talker(int num_msg,
 		return PAM_CONV_ERR;
 
 	/* copy values */
-	for (i = 0; i < num_msg; i++) {
+	for (i = 0; i < num_msg; ++i) {
 		/* initialize to safe values */
 		response[i].resp_retcode = 0;
-		response[i].resp = 0;
+		response[i].resp = NULL;
 
 		/* select response based on requested output style */
 		switch (msg[i]->msg_style) {
@@ -135,16 +135,10 @@ int chpass_pam_talker(int num_msg,
 				response[i].resp = strdup(userinfo->name);
 				break;
 			case PAM_PROMPT_ECHO_OFF:
-				if (userinfo->count++) {
-					response[i].resp = strdup(userinfo->newpw);
-				}
-				else {
-					response[i].resp = strdup(userinfo->oldpw);
-				}
+				response[i].resp = strdup((userinfo->count++) ? userinfo->newpw : userinfo->oldpw);
 				break;
 			default:
-				if (response)
-				free(response);
+				_pam_drop_reply(response, i);
 				return PAM_CONV_ERR;
 		}
 	}
@@ -169,7 +163,7 @@ PHP_FUNCTION(pam_auth)
 	char *error_msg;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|zb", &username, &username_len, &password, &password_len, &status, &checkacctmgmt) == FAILURE) {
-		return;
+		RETURN_FALSE;
 	}
 
 	userinfo.name = username;
@@ -220,7 +214,7 @@ PHP_FUNCTION(pam_auth)
 }
 /* }}} */
 
-/* {{{ proto bool pam_auth( string host, string password [, string &status ])
+/* {{{ proto bool pam_chpass( string username, string oldpassword, string newpassword [, string &status ])
    Changes a users password and returns TRUE on success, FALSE on failure */
 PHP_FUNCTION(pam_chpass)
 {
@@ -235,7 +229,7 @@ PHP_FUNCTION(pam_chpass)
 	char *error_msg;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|z", &username, &username_len, &oldpass, &oldpass_len, &newpass, &newpass_len, &status) == FAILURE) {
-		return;
+		RETURN_FALSE;
 	}
 
 	userinfo.name = username;
