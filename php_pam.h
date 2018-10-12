@@ -26,7 +26,7 @@
 extern zend_module_entry pam_module_entry;
 #define phpext_pam_ptr &pam_module_entry
 
-#define PHP_PAM_VERSION "2.0.0"
+#define PHP_PAM_VERSION "2.1.0"
 
 #ifdef PHP_WIN32
 #	define PHP_PAM_API __declspec(dllexport)
@@ -42,6 +42,7 @@ extern zend_module_entry pam_module_entry;
 
 ZEND_BEGIN_MODULE_GLOBALS(pam)
 	char *servicename;
+	zend_bool force_servicename;
 ZEND_END_MODULE_GLOBALS(pam)
 
 typedef struct {

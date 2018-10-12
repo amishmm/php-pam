@@ -40,6 +40,7 @@ static int le_pam;
  */
 PHP_INI_BEGIN()
 	STD_PHP_INI_ENTRY("pam.servicename", "php", PHP_INI_ALL, OnUpdateString, servicename, zend_pam_globals, pam_globals)
+	STD_PHP_INI_BOOLEAN("pam.force_servicename", "0", PHP_INI_ALL, OnUpdateBool, force_servicename, zend_pam_globals, pam_globals)
 PHP_INI_END()
 /* }}} */
 
@@ -147,12 +148,12 @@ int chpass_pam_talker(int num_msg,
 	return PAM_SUCCESS;
 }
 
-/* {{{ proto bool pam_auth( string host, string password [, string &status [, bool checkacctmgmt = true ] ])
+/* {{{ proto bool pam_auth( string username, string password [, string &status [, bool checkacctmgmt = true [, string servicename ] ] ])
    Authenticates a user and returns TRUE on success, FALSE on failure */
 PHP_FUNCTION(pam_auth)
 {
-	char *username, *password;
-	size_t username_len, password_len;
+	char *username, *password, *srvname = NULL;
+	size_t username_len, password_len, srvname_len = 0;
 	zval *status = NULL, *server, *remote_addr;
 	zend_bool checkacctmgmt = 1;
 
@@ -162,14 +163,14 @@ PHP_FUNCTION(pam_auth)
 	int result;
 	char *error_msg;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|zb", &username, &username_len, &password, &password_len, &status, &checkacctmgmt) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|zbs", &username, &username_len, &password, &password_len, &status, &checkacctmgmt, &srvname, &srvname_len) == FAILURE) {
 		RETURN_FALSE;
 	}
 
 	userinfo.name = username;
 	userinfo.pw = password;
 
-	if ((result = pam_start(PAM_G(servicename), userinfo.name, &conv_info, &pamh)) != PAM_SUCCESS) {
+	if ((result = pam_start((PAM_G(force_servicename) || !srvname || srvname_len < 1 || !srvname[0]) ? PAM_G(servicename) : srvname, userinfo.name, &conv_info, &pamh)) != PAM_SUCCESS) {
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_start");
 			zval_dtor(status);
@@ -214,12 +215,12 @@ PHP_FUNCTION(pam_auth)
 }
 /* }}} */
 
-/* {{{ proto bool pam_chpass( string username, string oldpassword, string newpassword [, string &status ])
+/* {{{ proto bool pam_chpass( string username, string oldpassword, string newpassword [, string &status [, string servicename ] ])
    Changes a users password and returns TRUE on success, FALSE on failure */
 PHP_FUNCTION(pam_chpass)
 {
-	char *username, *oldpass, *newpass;
-	size_t username_len, oldpass_len, newpass_len;
+	char *username, *oldpass, *newpass, *srvname = NULL;
+	size_t username_len, oldpass_len, newpass_len, srvname_len = 0;
 	zval *status = NULL;
 
 	pam_chpass_t userinfo = {NULL, NULL, NULL, 0};
@@ -228,7 +229,7 @@ PHP_FUNCTION(pam_chpass)
 	int result;
 	char *error_msg;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|z", &username, &username_len, &oldpass, &oldpass_len, &newpass, &newpass_len, &status) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|zs", &username, &username_len, &oldpass, &oldpass_len, &newpass, &newpass_len, &status, &srvname, &srvname_len) == FAILURE) {
 		RETURN_FALSE;
 	}
 
@@ -236,7 +237,7 @@ PHP_FUNCTION(pam_chpass)
 	userinfo.oldpw = oldpass;
 	userinfo.newpw = newpass;
 
-	if ((result = pam_start(PAM_G(servicename), userinfo.name, &conv_info, &pamh)) != PAM_SUCCESS) {
+	if ((result = pam_start((PAM_G(force_servicename) || !srvname || srvname_len < 1 || !srvname[0]) ? PAM_G(servicename) : srvname, userinfo.name, &conv_info, &pamh)) != PAM_SUCCESS) {
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_start");
 			zval_dtor(status);
@@ -278,6 +279,7 @@ PHP_FUNCTION(pam_chpass)
 static void php_pam_init_globals(zend_pam_globals *pam_globals)
 {
 	pam_globals->servicename = NULL;
+	pam_globals->force_servicename = 0;
 }
 /* }}} */
 

@@ -1,7 +1,9 @@
 API
 
-  bool pam_auth(string $username, string $password [, string &$error [, $checkacctmgmt = true ] ])
-  bool pam_chpass(string $username, string $oldpassword, string $newpassword [, string &$error ])
+  bool pam_auth(string $username, string $password
+                [, string &$error [, $checkacctmgmt = true [, string $servicename ] ] ])
+  bool pam_chpass(string $username, string $oldpassword, string $newpassword
+                [, string &$error [, string $servicename ] ])
 
  The parameters are
  
@@ -9,18 +11,25 @@ API
    password		- User supplied password
    error		- Output parameter to put any error messages in
    checkacctmgmt	- Call pam_acct_mgmt() to check account expiration and access hours (requires root access!)
+   servicename		- PAM service name to use (provided pam.force_servicename is not TRUE)
    oldpassword		- Current password on account
    newpassword		- Password to change to
 
 INSTALLATION
 
-  For pam_auth to work, pam must know about the php service.
+  For pam_auth and pam_chpass to work, module must know about the PAM service to use.
 
-  For the module itself, the only real configuration is the servicename. By
-  default, this is set to php. It can be changed by adding the following to your
-  php.ini:
+  By default, the PAM service is set to "php". It can be changed by adding the following
+  to your php.ini:
 
-  pam.servicename = "php";
+  pam.servicename = "your-pam-service";
+
+  Service name can also be, optionally, passed as a parameter to pam_auth OR pam_chpass.
+
+  You can inform the module to ignore the service name passed as a parameter and use
+  pam.servicename only, by adding the following to your php.ini:
+
+  pam.force_servicename = 1;
 
   Next, you'll need to create a pam service file for php. If you are on linux,
   you'll need to create the file /etc/pam.d/php. You can copy another one to work
