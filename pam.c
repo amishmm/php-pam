@@ -44,8 +44,7 @@ PHP_INI_BEGIN()
 PHP_INI_END()
 /* }}} */
 
-/*
- * auth_pam_talker: supply authentication information to PAM when asked
+/* {{{ auth_pam_talker: supply authentication information to PAM when asked
  *
  * Assumptions:
  *   A password is asked for by requesting input without echoing
@@ -95,9 +94,9 @@ int auth_pam_talker(int num_msg,
 	*resp = response;
 	return PAM_SUCCESS;
 }
+/* }}} */
 
-/*
- * chpass_pam_talker: supply authentication information to PAM when asked
+/* {{{ chpass_pam_talker: supply authentication information to PAM when asked
  *
  * Assumptions:
  *   A password is asked for by requesting input without echoing
@@ -147,6 +146,7 @@ int chpass_pam_talker(int num_msg,
 	*resp = response;
 	return PAM_SUCCESS;
 }
+/* }}} */
 
 /* {{{ proto bool pam_auth( string username, string password [, string &status [, bool checkacctmgmt = true [, string servicename ] ] ])
    Authenticates a user and returns TRUE on success, FALSE on failure */
@@ -314,11 +314,7 @@ PHP_MINFO_FUNCTION(pam)
 }
 /* }}} */
 
-/* {{{ pam_functions[]
- *
- * Every user visible function must have an entry in pam_functions[].
- */
-
+/* {{{ arginfo */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_pam_auth, 0, 0, 2)
     ZEND_ARG_INFO(0, username)
     ZEND_ARG_INFO(0, password)
@@ -334,7 +330,12 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_pam_chpass, 0, 0, 3)
     ZEND_ARG_INFO(1, status)
     ZEND_ARG_INFO(0, servicename)
 ZEND_END_ARG_INFO()
+/* }}} */
 
+/* {{{ pam_functions[]
+ *
+ * Every user visible function must have an entry in pam_functions[].
+ */
 const zend_function_entry pam_functions[] = {
 	PHP_FE(pam_auth,	arginfo_pam_auth)
 	PHP_FE(pam_chpass,	arginfo_pam_chpass)
