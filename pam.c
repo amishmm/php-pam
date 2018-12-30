@@ -163,7 +163,7 @@ PHP_FUNCTION(pam_auth)
 	int result;
 	char *error_msg;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|zbs", &username, &username_len, &password, &password_len, &status, &checkacctmgmt, &srvname, &srvname_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|z/bs", &username, &username_len, &password, &password_len, &status, &checkacctmgmt, &srvname, &srvname_len) == FAILURE) {
 		RETURN_FALSE;
 	}
 
@@ -229,7 +229,7 @@ PHP_FUNCTION(pam_chpass)
 	int result;
 	char *error_msg;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|zs", &username, &username_len, &oldpass, &oldpass_len, &newpass, &newpass_len, &status, &srvname, &srvname_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|z/s", &username, &username_len, &oldpass, &oldpass_len, &newpass, &newpass_len, &status, &srvname, &srvname_len) == FAILURE) {
 		RETURN_FALSE;
 	}
 
@@ -318,9 +318,26 @@ PHP_MINFO_FUNCTION(pam)
  *
  * Every user visible function must have an entry in pam_functions[].
  */
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_pam_auth, 0, 0, 2)
+    ZEND_ARG_INFO(0, username)
+    ZEND_ARG_INFO(0, password)
+    ZEND_ARG_INFO(1, status)
+    ZEND_ARG_INFO(0, checkacctmgmt)
+    ZEND_ARG_INFO(0, servicename)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_pam_chpass, 0, 0, 3)
+    ZEND_ARG_INFO(0, username)
+    ZEND_ARG_INFO(0, oldpassword)
+    ZEND_ARG_INFO(0, newpassword)
+    ZEND_ARG_INFO(1, status)
+    ZEND_ARG_INFO(0, servicename)
+ZEND_END_ARG_INFO()
+
 const zend_function_entry pam_functions[] = {
-	PHP_FE(pam_auth,	NULL)
-	PHP_FE(pam_chpass,	NULL)
+	PHP_FE(pam_auth,	arginfo_pam_auth)
+	PHP_FE(pam_chpass,	arginfo_pam_chpass)
 	PHP_FE_END	/* Must be the last line in pam_functions[] */
 };
 /* }}} */
