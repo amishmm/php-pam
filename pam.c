@@ -163,7 +163,7 @@ PHP_FUNCTION(pam_auth)
 	int result;
 	char *error_msg;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|z/bs", &username, &username_len, &password, &password_len, &status, &checkacctmgmt, &srvname, &srvname_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "ss|z/bs", &username, &username_len, &password, &password_len, &status, &checkacctmgmt, &srvname, &srvname_len) == FAILURE) {
 		RETURN_FALSE;
 	}
 
@@ -229,7 +229,7 @@ PHP_FUNCTION(pam_chpass)
 	int result;
 	char *error_msg;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|z/s", &username, &username_len, &oldpass, &oldpass_len, &newpass, &newpass_len, &status, &srvname, &srvname_len) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss|z/s", &username, &username_len, &oldpass, &oldpass_len, &newpass, &newpass_len, &status, &srvname, &srvname_len) == FAILURE) {
 		RETURN_FALSE;
 	}
 
