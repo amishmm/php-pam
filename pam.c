@@ -287,6 +287,7 @@ static void php_pam_init_globals(zend_pam_globals *pam_globals)
  */
 PHP_MINIT_FUNCTION(pam)
 {
+	ZEND_INIT_MODULE_GLOBALS(pam, php_pam_init_globals, NULL);
 	REGISTER_INI_ENTRIES();
 	return SUCCESS;
 }
