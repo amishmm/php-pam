@@ -18,8 +18,6 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id$ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -30,6 +28,12 @@
 #include "php_pam.h"
 #include <security/pam_appl.h>
 #include <security/_pam_macros.h>
+
+#if PHP_VERSION_ID < 80000
+#include "pam_legacy_arginfo.h"
+#else
+#include "pam_arginfo.h"
+#endif
 
 ZEND_DECLARE_MODULE_GLOBALS(pam)
 
@@ -314,41 +318,12 @@ PHP_MINFO_FUNCTION(pam)
 }
 /* }}} */
 
-/* {{{ arginfo */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_pam_auth, 0, 0, 2)
-    ZEND_ARG_INFO(0, username)
-    ZEND_ARG_INFO(0, password)
-    ZEND_ARG_INFO(1, status)
-    ZEND_ARG_INFO(0, checkacctmgmt)
-    ZEND_ARG_INFO(0, servicename)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_pam_chpass, 0, 0, 3)
-    ZEND_ARG_INFO(0, username)
-    ZEND_ARG_INFO(0, oldpassword)
-    ZEND_ARG_INFO(0, newpassword)
-    ZEND_ARG_INFO(1, status)
-    ZEND_ARG_INFO(0, servicename)
-ZEND_END_ARG_INFO()
-/* }}} */
-
-/* {{{ pam_functions[]
- *
- * Every user visible function must have an entry in pam_functions[].
- */
-const zend_function_entry pam_functions[] = {
-	PHP_FE(pam_auth,	arginfo_pam_auth)
-	PHP_FE(pam_chpass,	arginfo_pam_chpass)
-	PHP_FE_END	/* Must be the last line in pam_functions[] */
-};
-/* }}} */
-
 /* {{{ pam_module_entry
  */
 zend_module_entry pam_module_entry = {
 	STANDARD_MODULE_HEADER,
 	"pam",
-	pam_functions,
+	ext_functions,
 	PHP_MINIT(pam),
 	PHP_MSHUTDOWN(pam),
 	NULL,	/* Replace with NULL if there's nothing to do at request start */
