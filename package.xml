@@ -10,11 +10,11 @@
   <email>anonamish AT gmail DOT com</email>
   <active>yes</active>
  </lead>
- <date>2021-06-07</date>
- <time>10:37:54</time>
+ <date>2021-06-08</date>
+ <time>04:50:39</time>
  <version>
-  <release>2.2.1</release>
-  <api>2.2.1</api>
+  <release>2.2.2</release>
+  <api>2.2.2</api>
  </version>
  <stability>
   <release>stable</release>
@@ -22,22 +22,25 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-PHP 8.0 support with other features
+Add missing globals init and other minor fixes
  </notes>
  <contents>
   <dir name="/">
    <file md5sum="5adffca5ea647910bc360907d9e47cc0" name="config.m4" role="src" />
    <file md5sum="bdb1e119a407fa3aae202537378bce3b" name="CREDITS" role="doc" />
-   <file md5sum="67e369bc8d1f2e641236b8002039a6a2" name="LICENSE" role="doc" />
-   <file md5sum="6df54e6ca5fc4414960cdb6448c0191b" name="pam.c" role="src" />
-   <file md5sum="ed4cde09f2fec7336a7ef6b02ccf9ba1" name="php_pam.h" role="src" />
+   <file md5sum="7e571b888d585b31f9ef5edcc647fa30" name="LICENSE" role="doc" />
+   <file md5sum="5cca8e971156b8d2bfee8df90cce674a" name="pam_arginfo.h" role="src" />
+   <file md5sum="4b17508847087c2edb27cb41ee5235e1" name="pam.c" role="src" />
+   <file md5sum="657c141fa1ef6147aecd6a040551188c" name="pam_legacy_arginfo.h" role="src" />
+   <file md5sum="c271a5050f9632d8efffb97274fcca89" name="pam.stub.php" role="src" />
+   <file md5sum="c4eaf5b28e41673bae1773278f3f02b9" name="php_pam.h" role="src" />
    <file md5sum="8f9e1de50efc40a815ec5193259f811a" name="README" role="doc" />
   </dir>
  </contents>
  <dependencies>
   <required>
    <php>
-    <min>8.0.0</min>
+    <min>7.0.0</min>
    </php>
    <pearinstaller>
     <min>1.4.0b1</min>
@@ -47,6 +50,22 @@ PHP 8.0 support with other features
  <providesextension>pam</providesextension>
  <extsrcrelease />
  <changelog>
+  <release>
+   <date>2021-06-07</date>
+   <time>14:08:27</time>
+   <version>
+    <release>2.2.2</release>
+    <api>2.2.2</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>
+Add missing globals init and other minor fixes
+   </notes>
+  </release>
   <release>
    <date>2021-01-30</date>
    <time>12:39:00</time>
