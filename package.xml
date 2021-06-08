@@ -11,7 +11,6 @@
   <active>yes</active>
  </lead>
  <date>2021-06-07</date>
- <time>10:37:54</time>
  <version>
   <release>2.2.1</release>
   <api>2.2.1</api>
@@ -26,21 +25,24 @@ PHP 8.0 support with other features
  </notes>
  <contents>
   <dir name="/">
-   <file md5sum="5adffca5ea647910bc360907d9e47cc0" name="config.m4" role="src" />
-   <file md5sum="bdb1e119a407fa3aae202537378bce3b" name="CREDITS" role="doc" />
-   <file md5sum="67e369bc8d1f2e641236b8002039a6a2" name="LICENSE" role="doc" />
-   <file md5sum="6df54e6ca5fc4414960cdb6448c0191b" name="pam.c" role="src" />
-   <file md5sum="ed4cde09f2fec7336a7ef6b02ccf9ba1" name="php_pam.h" role="src" />
-   <file md5sum="8f9e1de50efc40a815ec5193259f811a" name="README" role="doc" />
+   <file name="config.m4" role="src" />
+   <file name="CREDITS" role="doc" />
+   <file name="LICENSE" role="doc" />
+   <file name="pam.c" role="src" />
+   <file name="php_pam.h" role="src" />
+   <file name="README" role="doc" />
+   <file name="pam.stub.php" role="src" />
+   <file name="pam_arginfo.h" role="src" />
+   <file name="pam_legacy_arginfo.h" role="src" />
   </dir>
  </contents>
  <dependencies>
   <required>
    <php>
-    <min>8.0.0</min>
+    <min>7.3.0</min>
    </php>
    <pearinstaller>
-    <min>1.4.0b1</min>
+    <min>1.10</min>
    </pearinstaller>
   </required>
  </dependencies>
