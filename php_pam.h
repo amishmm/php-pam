@@ -40,7 +40,7 @@ extern zend_module_entry pam_module_entry;
 
 ZEND_BEGIN_MODULE_GLOBALS(pam)
 	char *servicename;
-	zend_bool force_servicename;
+	bool force_servicename;
 ZEND_END_MODULE_GLOBALS(pam)
 
 typedef struct {

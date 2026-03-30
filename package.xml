@@ -30,7 +30,6 @@ Remove PAM_DISALLOW_NULL_AUTHTOK from pam_chauthtok()
    <file name="LICENSE" role="doc" />
    <file name="pam_arginfo.h" role="src" />
    <file name="pam.c" role="src" />
-   <file name="pam_legacy_arginfo.h" role="src" />
    <file name="pam.stub.php" role="src" />
    <file name="php_pam.h" role="src" />
    <file name="README" role="doc" />
