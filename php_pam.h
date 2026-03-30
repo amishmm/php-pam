@@ -22,7 +22,9 @@
 extern zend_module_entry pam_module_entry;
 #define phpext_pam_ptr &pam_module_entry
 
-#define PHP_PAM_VERSION "2.2.5"
+/* Auto-synced from composer.json during build by scripts/sync-version.sh
+ * Do not manually edit - will be overwritten by make */
+#define PHP_PAM_VERSION "3.0.0"
 
 #ifdef PHP_WIN32
 #	define PHP_PAM_API __declspec(dllexport)

@@ -18,8 +18,8 @@ else
     AC_MSG_RESULT([$PHP_VERSION])
 fi
 
-if test $PHP_MAJOR_VERSION -lt 7; then
-    AC_MSG_ERROR([need at least PHP 7 or newer])
+if test $PHP_MAJOR_VERSION -lt 8; then
+    AC_MSG_ERROR([need at least PHP 8.0 or newer])
 fi
 
 PHP_ARG_WITH(pam, for PAM support,
@@ -64,3 +64,5 @@ if test "$PHP_PAM" != "no"; then
 
   PHP_NEW_EXTENSION(pam, pam.c, $ext_shared,, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
 fi
+
+PHP_ADD_MAKEFILE_FRAGMENT
