@@ -11,20 +11,23 @@ jobs:
   test:
     name: PHP ${{ matrix.php-version }} Test
     runs-on: ubuntu-24.04
-    continue-on-error: true
+    continue-on-error: ${{ matrix.experimental }}
 
     strategy:
       fail-fast: false
       matrix:
         php-version:
-          - '7.3'
-          - '7.4'
           - '8.0'
           - '8.1'
           - '8.2'
           - '8.3'
           - '8.4'
           - '8.5'
+          - 'nightly'
+        experimental: [false]
+        include:
+          - php-version: 'nightly'
+            experimental: true
 
     steps:
       - name: Checkout code

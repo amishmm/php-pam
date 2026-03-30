@@ -1,0 +1,23 @@
+{
+  "name": "amishmm/pam",
+  "description": "PAM (Pluggable Authentication Modules) integration for PHP",
+  "type": "extension",
+  "keywords": ["pam", "authentication", "extension", "pecl"],
+  "license": "PHP-3.01",
+  "version": "3.0.0",
+  "authors": [
+    {
+      "name": "Amish M",
+      "email": "anonamish@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.0"
+  },
+  "require-dev": {},
+  "extra": {
+    "branch-alias": {
+      "dev-master": "3.0.x-dev"
+    }
+  }
+}
