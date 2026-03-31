@@ -38,5 +38,8 @@ tests/*/*.sh
 *.dep
 *~
 
+# Generated version header
+pam_version.h
+
 # Test results
 php_test_results_*.txt

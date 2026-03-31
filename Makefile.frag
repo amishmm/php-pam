@@ -1,11 +1,8 @@
 # Makefile fragment for PAM extension
 # Auto-included by phpize-generated Makefile
 
-# Sync version from composer.json before building
-$(all_targets): sync-version
+# Generate version header before compiling source
+pam.lo: pam_version.h
 
-.PHONY: sync-version
-sync-version:
-	@if [ -f scripts/sync-version.sh ]; then \
-		bash scripts/sync-version.sh; \
-	fi
+pam_version.h:
+	@bash scripts/sync-version.sh

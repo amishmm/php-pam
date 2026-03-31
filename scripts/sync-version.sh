@@ -1,19 +1,14 @@
 #!/bin/bash
-# Update PHP_PAM_VERSION in header from composer.json
+# Generate pam_version.h from composer.json
 # Run automatically via Makefile before build
 
 set -e
 
 COMPOSER_JSON="composer.json"
-HEADER_FILE="php_pam.h"
+VERSION_HEADER="pam_version.h"
 
 if [ ! -f "$COMPOSER_JSON" ]; then
     echo "Error: $COMPOSER_JSON not found"
-    exit 1
-fi
-
-if [ ! -f "$HEADER_FILE" ]; then
-    echo "Error: $HEADER_FILE not found"
     exit 1
 fi
 
@@ -28,10 +23,20 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-echo "Syncing version: $VERSION"
+echo "Generating version header: $VERSION"
 
-# Update header file
-sed -i "s/#define PHP_PAM_VERSION \".*\"/#define PHP_PAM_VERSION \"$VERSION\"/" "$HEADER_FILE"
+# Generate version header
+cat > "$VERSION_HEADER" <<EOF
+/* Generated from composer.json by scripts/sync-version.sh
+ * DO NOT EDIT - This file is auto-generated during build */
 
-# Verify the change
-grep "PHP_PAM_VERSION" "$HEADER_FILE"
+#ifndef PAM_VERSION_H
+#define PAM_VERSION_H
+
+#define PHP_PAM_VERSION "$VERSION"
+
+#endif /* PAM_VERSION_H */
+EOF
+
+# Verify the generated file
+grep "PHP_PAM_VERSION" "$VERSION_HEADER"
