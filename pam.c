@@ -27,11 +27,7 @@
 #include <security/pam_appl.h>
 #include <security/_pam_macros.h>
 
-#if PHP_VERSION_ID < 80000
-#include "pam_legacy_arginfo.h"
-#else
 #include "pam_arginfo.h"
-#endif
 
 ZEND_DECLARE_MODULE_GLOBALS(pam)
 
@@ -157,7 +153,7 @@ PHP_FUNCTION(pam_auth)
 	char *username, *password, *srvname = NULL;
 	size_t username_len, password_len, srvname_len = 0;
 	zval *status = NULL, *server, *remote_addr;
-	zend_bool checkacctmgmt = 1;
+	bool checkacctmgmt = 1;
 
 	pam_auth_t userinfo = {NULL, NULL};
 	struct pam_conv conv_info = {&auth_pam_talker, (void *) &userinfo};

@@ -22,7 +22,8 @@
 extern zend_module_entry pam_module_entry;
 #define phpext_pam_ptr &pam_module_entry
 
-#define PHP_PAM_VERSION "2.2.5"
+/* Version is auto-generated from composer.json during build */
+#include "pam_version.h"
 
 #ifdef PHP_WIN32
 #	define PHP_PAM_API __declspec(dllexport)
@@ -38,7 +39,7 @@ extern zend_module_entry pam_module_entry;
 
 ZEND_BEGIN_MODULE_GLOBALS(pam)
 	char *servicename;
-	zend_bool force_servicename;
+	bool force_servicename;
 ZEND_END_MODULE_GLOBALS(pam)
 
 typedef struct {
