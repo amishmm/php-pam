@@ -171,7 +171,7 @@ PHP_FUNCTION(pam_auth)
 	if ((result = pam_start((PAM_G(force_servicename) || !srvname || srvname_len < 1 || !srvname[0]) ? PAM_G(servicename) : srvname, userinfo.name, &conv_info, &pamh)) != PAM_SUCCESS) {
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_start");
-			zval_dtor(status);
+			zval_ptr_dtor_nogc(status);
 			ZVAL_STRING(status, error_msg);
 			efree(error_msg);
 		}
@@ -187,7 +187,7 @@ PHP_FUNCTION(pam_auth)
 	if ((result = pam_authenticate(pamh, PAM_DISALLOW_NULL_AUTHTOK)) != PAM_SUCCESS) {
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_authenticate");
-			zval_dtor(status);
+			zval_ptr_dtor_nogc(status);
 			ZVAL_STRING(status, error_msg);
 			efree(error_msg);
 		}
@@ -199,7 +199,7 @@ PHP_FUNCTION(pam_auth)
 		if ((result = pam_acct_mgmt(pamh, PAM_DISALLOW_NULL_AUTHTOK)) != PAM_SUCCESS) {
 			if (status) {
 				spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_acct_mgmt");
-				zval_dtor(status);
+				zval_ptr_dtor_nogc(status);
 				ZVAL_STRING(status, error_msg);
 				efree(error_msg);
 			}
@@ -238,7 +238,7 @@ PHP_FUNCTION(pam_chpass)
 	if ((result = pam_start((PAM_G(force_servicename) || !srvname || srvname_len < 1 || !srvname[0]) ? PAM_G(servicename) : srvname, userinfo.name, &conv_info, &pamh)) != PAM_SUCCESS) {
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_start");
-			zval_dtor(status);
+			zval_ptr_dtor_nogc(status);
 			ZVAL_STRING(status, error_msg);
 			efree(error_msg);
 		}
@@ -248,7 +248,7 @@ PHP_FUNCTION(pam_chpass)
 	if ((result = pam_authenticate(pamh, PAM_DISALLOW_NULL_AUTHTOK)) != PAM_SUCCESS) {
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_authenticate");
-			zval_dtor(status);
+			zval_ptr_dtor_nogc(status);
 			ZVAL_STRING(status, error_msg);
 			efree(error_msg);
 		}
@@ -259,7 +259,7 @@ PHP_FUNCTION(pam_chpass)
 	if ((result = pam_chauthtok(pamh, 0)) != PAM_SUCCESS) {
 		if (status) {
 			spprintf(&error_msg, 0, "%s (in %s)", (char *) pam_strerror(pamh, result), "pam_chauthtok");
-			zval_dtor(status);
+			zval_ptr_dtor_nogc(status);
 			ZVAL_STRING(status, error_msg);
 			efree(error_msg);
 		}
