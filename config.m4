@@ -19,7 +19,10 @@ else
 fi
 
 if test $PHP_MAJOR_VERSION -lt 8; then
-    AC_MSG_ERROR([need at least PHP 8.0 or newer])
+    AC_MSG_ERROR([need at least PHP 8.1 or newer])
+fi
+if test $PHP_MAJOR_VERSION -eq 8 -a $PHP_MINOR_VERSION -lt 1; then
+    AC_MSG_ERROR([need at least PHP 8.1 or newer])
 fi
 
 PHP_ARG_WITH(pam, for PAM support,

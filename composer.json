@@ -1,7 +1,7 @@
 {
   "name": "amishmm/pam",
   "description": "PAM (Pluggable Authentication Modules) integration for PHP",
-  "type": "extension",
+  "type": "php-ext",
   "keywords": ["pam", "authentication", "extension", "pecl"],
   "license": "PHP-3.01",
   "version": "3.0.0",
@@ -12,9 +12,20 @@
     }
   ],
   "require": {
-    "php": "^8.0"
+    "php": "^8.1",
+    "lib-pam": "*"
   },
   "require-dev": {},
+  "php-ext": {
+    "extension-name": "pam",
+    "configure-options": [
+      {
+        "name": "with-pam",
+        "description": "Path to libpam install prefix",
+        "needs-value": true
+      }
+    ]
+  },
   "extra": {
     "branch-alias": {
       "dev-master": "3.0.x-dev"

@@ -38,7 +38,7 @@ Remove PAM_DISALLOW_NULL_AUTHTOK from pam_chauthtok()
  <dependencies>
   <required>
    <php>
-    <min>8.0.0</min>
+    <min>8.1.0</min>
    </php>
    <pearinstaller>
     <min>1.10</min>
