@@ -10,7 +10,7 @@
   <email>anonamish AT gmail DOT com</email>
   <active>yes</active>
  </lead>
- <date>2023-09-22</date>
+ <date>2026-10-25</date>
  <version>
   <release>3.0.0</release>
   <api>3.0.0</api>
@@ -21,18 +21,33 @@
  </stability>
  <license uri="http://www.php.net/license">PHP</license>
  <notes>
-Remove PAM_DISALLOW_NULL_AUTHTOK from pam_chauthtok()
+PHP 8.0+ modernization and composer.json file
+Drop support for PHP 7
+Test infrastructure setup
  </notes>
  <contents>
   <dir name="/">
+   <file name="composer.json" role="src" />
    <file name="config.m4" role="src" />
    <file name="CREDITS" role="doc" />
    <file name="LICENSE" role="doc" />
+   <file name="Makefile.frag" role="src" />
    <file name="pam_arginfo.h" role="src" />
    <file name="pam.c" role="src" />
    <file name="pam.stub.php" role="src" />
    <file name="php_pam.h" role="src" />
    <file name="README" role="doc" />
+    <dir name="scripts">
+     <file name="sync-version.sh" role="src" />
+    </dir>
+    <dir name="tests">
+     <file name="README.md" role="doc" />
+     <file name="pam_auth_basic.phpt" role="test" />
+     <file name="pam_chpass_basic.phpt" role="test" />
+     <file name="pam_extension_loaded.phpt" role="test" />
+     <file name="pam_info.phpt" role="test" />
+     <file name="pam_ini_basic.phpt" role="test" />
+    </dir>
   </dir>
  </contents>
  <dependencies>
@@ -48,6 +63,23 @@ Remove PAM_DISALLOW_NULL_AUTHTOK from pam_chauthtok()
  <providesextension>pam</providesextension>
  <extsrcrelease />
  <changelog>
+  <release>
+   <date>2026-10-25</date>
+   <version>
+    <release>3.0.0</release>
+    <api>3.0.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <license uri="http://www.php.net/license">PHP</license>
+   <notes>
+PHP 8.0+ modernization and composer.json file
+Drop support for PHP 7
+Test infrastructure setup
+   </notes>
+  </release>
   <release>
    <date>2023-09-22</date>
    <time>20:00:00</time>
