@@ -4,7 +4,7 @@
   "type": "php-ext",
   "keywords": ["pam", "authentication", "extension", "pecl"],
   "license": "PHP-3.01",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "authors": [
     {
       "name": "Amish M",
