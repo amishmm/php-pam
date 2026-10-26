@@ -4,8 +4,9 @@
 
 set -e
 
-COMPOSER_JSON="composer.json"
-VERSION_HEADER="pam_version.h"
+SRCDIR=$(dirname $(dirname $0))
+COMPOSER_JSON="${SRCDIR}/composer.json"
+VERSION_HEADER="${SRCDIR}/pam_version.h"
 
 if [ ! -f "$COMPOSER_JSON" ]; then
     echo "Error: $COMPOSER_JSON not found"

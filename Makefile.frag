@@ -5,4 +5,4 @@
 pam.lo: pam_version.h
 
 pam_version.h:
-	@bash scripts/sync-version.sh
+	@bash $(top_srcdir)/scripts/sync-version.sh
